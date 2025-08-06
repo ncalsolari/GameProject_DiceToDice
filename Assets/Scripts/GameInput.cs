@@ -5,6 +5,7 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public static GameInput Instance { get; private set; }
 
     public event EventHandler OnRollDiceAction;
+    public event EventHandler OnShowDiceAction;
 
     private void Awake() {
         Instance = this;
@@ -13,6 +14,12 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public void RollDiceInput() {
         Debug.Log("Rolando os Dados pelo World!");
         OnRollDiceAction?.Invoke(this, EventArgs.Empty);
+
+    }
+
+    public void ShowDiceInput() {
+        Debug.Log("Mostrando os Dados pelo World!");
+        OnShowDiceAction?.Invoke(this, EventArgs.Empty);
 
     }
 }
