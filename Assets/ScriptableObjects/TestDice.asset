@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2502afc96c4518f1970db02db86a37c, type: 3}
   m_Name: TestDice
   m_EditorClassIdentifier: 
-  prefab: {fileID: 7047953746662308097, guid: b2fb6619e49d30281817d8e7edc25291, type: 3}
+  prefab: {fileID: 1433909311590125134, guid: fa533be7cf2595b88b91976b933d6094, type: 3}
   faces:
   - {fileID: 21300000, guid: 8d3d077cbdb182b25bb037596c91355a, type: 3}
   - {fileID: 21300000, guid: 7a0fcf4e029d16f8a9344428db7e4efb, type: 3}

@@ -13,6 +13,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
     public static Player Instance { get; private set; }
 
 
+
     [SerializeField] private GameInput gameInput;
     [SerializeField] private List<DiceSO> diceSOList = new List<DiceSO>();
     [SerializeField] private List<Transform> dicePositionList = new List<Transform>();
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
             Debug.Log("qnt de faces " + (i + 1) + ": " + diceQnt[i] + "\n");
         }
 
+        DealerRollDice.Instance.ShowDiceHand(diceSOList, actualDiceQnt);
 
 
     }
@@ -85,12 +87,14 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
     }
 
     private void ShowDiceHand() {
+
+        /*
         for (int d = 0; d < actualDiceQnt; d++) {
             Transform dice = Instantiate(diceSOList[d].prefab, dicePositionList[d]);
             dice.localPosition = Vector3.zero;
             UnityEngine.UI.Image img = dice.GetComponentInChildren<UnityEngine.UI.Image>();
             img.sprite = diceSOList[d].faces[diceValue[d] - 1];
-        }
+        }*/
     }
     public int GetDiceQnt() {
         return actualDiceQnt;

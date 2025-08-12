@@ -9,7 +9,9 @@ public class InGamePlayerUI : MonoBehaviour {
 
 
     private void Awake() {
+
         rollDiceButton.onClick.AddListener(() => {
+            Debug.Log("Rolando os Dados!");
             GameInput.Instance.RollDiceInput();
 
         });
