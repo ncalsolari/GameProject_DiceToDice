@@ -50,7 +50,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
             Debug.Log("qnt de faces " + (i + 1) + ": " + diceQnt[i] + "\n");
         }
 
-        DealerRollDice.Instance.ShowDiceHand(diceSOList, actualDiceQnt);
+        DealerRollDice.Instance.ShowDiceHand(diceSOList, actualDiceQnt, diceValue);
 
 
     }

@@ -3,11 +3,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
+using System.Collections;
 
 public class DealerRollDice : MonoBehaviour {
 
     public static DealerRollDice Instance { get; private set; }
 
+    #region VariaveisDeLancamento
     [SerializeField] Transform bucketCenter;
     [SerializeField] Transform spawnCenter;
 
@@ -17,11 +19,29 @@ public class DealerRollDice : MonoBehaviour {
 
     //forca do lancamento e giro dos dados
     public float minLaunchForce = 25f;
-    public float maxLaunchForce = 240f;
-    private float minSpinForce = 2f;
-    private float maxSpinForce = 5f;
+    public float maxLaunchForce = 200f;
+    private float minSpinForce = 3f;
+    private float maxSpinForce = 6f;
+    #endregion
 
+    #region VariaveisDeFalsoRolamento
+    private struct DiceList {
+        public GameObject GameObject { get; set; }
+        public int Face { get; set; }
+        public bool IsSettling { get; set; }
 
+        public DiceList(GameObject gameObject, int face) {
+            this.GameObject = gameObject;
+            this.Face = face;
+            this.IsSettling = false;
+        }
+    }
+    private List<DiceList> diceList = new List<DiceList>();
+    public float settleThresholdSpeed = 5f;
+    public float settleThresholdSpin = 0.05f;
+    public float snapDuration = 0.9f;
+
+    #endregion
     private void Awake() {
 
 
@@ -32,7 +52,11 @@ public class DealerRollDice : MonoBehaviour {
 
         GameInput.Instance.OnRollDiceAction += GameInput_OnRollDiceAction;
 
+    }
 
+    private void Update() {
+
+        CheckSettling();
 
     }
 
@@ -40,7 +64,7 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
-    public void ShowDiceHand(List<DiceSO> diceList, int diceQnt) {
+    public void ShowDiceHand(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
 
         for (int i = 0; i < diceQnt; i++) {
 
@@ -52,8 +76,11 @@ public class DealerRollDice : MonoBehaviour {
             );
 
             Vector3 spawnPos = spawnCenter.position + randomOffset + Vector3.up * spawnHeight;
-            GameObject dice = Instantiate(diceList[i].prefab, spawnPos, UnityEngine.Random.rotation);
+            GameObject dice = Instantiate(playerDiceList[i].prefab, spawnPos, UnityEngine.Random.rotation);
             Rigidbody rb = dice.GetComponent<Rigidbody>();
+
+            diceList.Add(new DiceList(dice, playerDiceValue[i])); // guardo o dado instanciado e sua face para a rolagem fake
+
 
             // Velocidade inicial aleatória (empurrando para baixo e para dentro do balde)
             Vector3 launchDir = (bucketCenter.position - spawnPos).normalized + Vector3.forward;
@@ -73,4 +100,57 @@ public class DealerRollDice : MonoBehaviour {
         }
 
     }
+
+
+    private void CheckSettling() {
+        //para cada dado checo se algum deles esta parando
+        foreach (var dice in diceList) {
+            if (!dice.IsSettling) {
+
+                Rigidbody rb = dice.GameObject.GetComponent<Rigidbody>();
+                if (rb.linearVelocity.magnitude < settleThresholdSpeed || rb.angularVelocity.magnitude < settleThresholdSpin) { //dado esta parando
+
+                    StartCoroutine(SnapToFace(dice));//comeco a coroutine de direcionar o dado para a face desejada
+
+                }
+
+            }
+
+
+        }
+
+    }
+
+    private IEnumerator SnapToFace(DiceList dice) {
+        dice.IsSettling = true;
+
+        Quaternion startRot = dice.GameObject.transform.rotation; //coordenadas atuais do dado
+        Quaternion endRot = GetRotarionForFace(dice.Face); // calcula coordenadas finais do dado para ter a face desejada para cima
+
+        float elapsed = 0f;
+
+        while (elapsed < snapDuration) {
+            elapsed += Time.deltaTime;
+            float t = t = 1 - Mathf.Pow(1 - elapsed / snapDuration, 2); // sera a fracao dessa interpolacao
+            dice.GameObject.transform.rotation = Quaternion.Slerp(startRot, endRot, t);
+            yield return null; //ele para aqui a cada frame, assim o dado segue girando no sentido que queremos ao decorrer do passar dos frmaes
+        }
+
+        dice.GameObject.transform.rotation = endRot;
+
+    }
+
+    private Quaternion GetRotarionForFace(int face) {
+        switch (face) {
+            case 1: return Quaternion.Euler(-90, 0, 0);
+            case 2: return Quaternion.Euler(0, 0, 0);
+            case 3: return Quaternion.Euler(0, 0, 90);
+            case 4: return Quaternion.Euler(0, 0, -90);
+            case 5: return Quaternion.Euler(180, 0, 0);
+            case 6: return Quaternion.Euler(90, 0, 0);
+            default: return Quaternion.identity;
+        }
+
+    }
+
 }

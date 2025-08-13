@@ -1310,7 +1310,10 @@ MonoBehaviour:
   spawnCenter: {fileID: 585201452}
   spawnHeight: 3
   minLaunchForce: 22.4
-  maxLaunchForce: 233
+  maxLaunchForce: 168.4
+  settleThresholdSpeed: 5
+  settleThresholdSpin: 0.5
+  snapDuration: 0.9
 --- !u!1 &687587842
 GameObject:
   m_ObjectHideFlags: 0
