@@ -12,7 +12,7 @@ public class InGamePlayerUI : MonoBehaviour {
 
         rollDiceButton.onClick.AddListener(() => {
             Debug.Log("Rolando os Dados!");
-            GameInput.Instance.RollDiceInput();
+            GameInput.Instance.RollDiceInputTransitionScene();
 
         });
 

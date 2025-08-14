@@ -18,8 +18,8 @@ public class DealerRollDice : MonoBehaviour {
     private float spawnAreaRadiusZ = 0.5f; // area do spawn dos dados
 
     //forca do lancamento e giro dos dados
-    public float minLaunchForce = 25f;
-    public float maxLaunchForce = 200f;
+    public float minLaunchForce = 20f;
+    public float maxLaunchForce = 250f;
     private float minSpinForce = 3f;
     private float maxSpinForce = 6f;
     #endregion
@@ -37,9 +37,9 @@ public class DealerRollDice : MonoBehaviour {
         }
     }
     private List<DiceList> diceList = new List<DiceList>();
-    public float settleThresholdSpeed = 5f;
-    public float settleThresholdSpin = 0.05f;
-    public float snapDuration = 0.9f;
+    public float settleThresholdSpeed = 6f;
+    public float settleThresholdSpin = 0.3f;
+    public float snapDuration = 0.7f;
 
     #endregion
     private void Awake() {
@@ -64,7 +64,7 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
-    public void ShowDiceHand(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
+    public void RollDiceHand(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
 
         for (int i = 0; i < diceQnt; i++) {
 
@@ -76,7 +76,7 @@ public class DealerRollDice : MonoBehaviour {
             );
 
             Vector3 spawnPos = spawnCenter.position + randomOffset + Vector3.up * spawnHeight;
-            GameObject dice = Instantiate(playerDiceList[i].prefab, spawnPos, UnityEngine.Random.rotation);
+            GameObject dice = Instantiate(playerDiceList[i].prefab, spawnPos, UnityEngine.Random.rotation, transform);
             Rigidbody rb = dice.GetComponent<Rigidbody>();
 
             diceList.Add(new DiceList(dice, playerDiceValue[i])); // guardo o dado instanciado e sua face para a rolagem fake

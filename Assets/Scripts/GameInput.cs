@@ -4,11 +4,17 @@ using UnityEngine;
 public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos botoes clicados no jogo estado: InGame (jogo rolando)
     public static GameInput Instance { get; private set; }
 
+
+    public event EventHandler OnRollDiceActionTransitionScene;
     public event EventHandler OnRollDiceAction;
     public event EventHandler OnShowDiceAction;
 
     private void Awake() {
         Instance = this;
+    }
+
+    public void RollDiceInputTransitionScene() {
+        OnRollDiceActionTransitionScene?.Invoke(this, EventArgs.Empty);
     }
 
     public void RollDiceInput() {

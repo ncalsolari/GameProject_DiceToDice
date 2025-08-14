@@ -22,6 +22,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
     private int[] diceQnt = new int[6]; //o valor de diceQnt[0] significa quantos dados cm face 1 eu tenho, diceQnt[1] face 2 e ...
     private int[] diceValue = new int[DICE_QNT]; //o valor de diceValue[0] significa a face do meu dado 1 (de um dos meus dados)
     private int actualDiceQnt = DICE_QNT;
+    private bool diceHandActive = false;
 
     private void Awake() {
 
@@ -42,6 +43,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
     private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
         ResetHand();
         RollDiceHand();
+        diceHandActive = true;
         for (int i = 0; i < actualDiceQnt; i++) {
             Debug.Log("face do dado " + (i + 1) + ": " + diceValue[i] + "\n");
         }
@@ -50,7 +52,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
             Debug.Log("qnt de faces " + (i + 1) + ": " + diceQnt[i] + "\n");
         }
 
-        DealerRollDice.Instance.ShowDiceHand(diceSOList, actualDiceQnt, diceValue);
+        DealerRollDice.Instance.RollDiceHand(diceSOList, actualDiceQnt, diceValue);
 
 
     }
@@ -100,4 +102,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
         return actualDiceQnt;
     }
 
+    public bool HasDiceHandActive() {
+        return diceHandActive;
+    }
 }
