@@ -37,7 +37,8 @@ public class DealerRollDice : MonoBehaviour {
             this.IsSettling = false;
         }
     }
-    private List<DiceList> diceList = new List<DiceList>();
+    private List<DiceList> diceList2 = new List<DiceList>();
+    private List<GameObject> diceList = new List<GameObject>();
     public float settleThresholdSpeed = 1f;
     public float settleThresholdSpin = 0.4f;
     public float snapDuration = 1f;
@@ -68,8 +69,8 @@ public class DealerRollDice : MonoBehaviour {
     private void GameInput_OnRollEraseAction(object sender, EventArgs e) {
         // percorre todos os dados instanciados e destrói
         foreach (var diceEntry in diceList) {
-            if (diceEntry.GameObject != null) {
-                Destroy(diceEntry.GameObject);
+            if (diceEntry.gameObject != null) {
+                Destroy(diceEntry.gameObject);
             }
         }
 
@@ -91,9 +92,11 @@ public class DealerRollDice : MonoBehaviour {
 
             Vector3 spawnPos = spawnCenter.position + randomOffset + Vector3.up * spawnHeight;
             GameObject dice = Instantiate(playerDiceList[i].prefab, spawnPos, UnityEngine.Random.rotation, transform);
+            Dice diceScript = dice.GetComponent<Dice>();
+
             Rigidbody rb = dice.GetComponent<Rigidbody>();
 
-            diceList.Add(new DiceList(dice, playerDiceValue[i])); // guardo o dado instanciado e sua face para a rolagem fake
+            diceList.Add(dice); // guardo o dado instanciado e sua face para a rolagem fake
 
 
             // Velocidade inicial aleatória (empurrando para baixo e para dentro do balde)
@@ -115,18 +118,26 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
+    public int GetFaceUp() {
+
+
+
+        return 0;
+    }
+
 
     private void CheckSettling() {
         //para cada dado checo se algum deles esta parando
         for (int i = 0; i < diceList.Count; i++) {
+            Dice diceScript = diceList[i].GetComponent<Dice>();
 
-            if (!diceList[i].IsSettling) {
+            if (!diceScript.IsDiceSettling()) {
 
-                Rigidbody rb = diceList[i].GameObject.GetComponent<Rigidbody>();
+                Rigidbody rb = diceScript.gameObject.GetComponent<Rigidbody>();
 
                 if (rb.linearVelocity.magnitude < settleThresholdSpeed && rb.angularVelocity.magnitude < settleThresholdSpin) { //dado esta parando
 
-                    diceList[i].IsSettling = true;
+                    diceScript.SetDiceSettling(true);
                     // rb.linearVelocity = Vector3.zero;
                     rb.angularVelocity = Vector3.zero;
                     // rb.isKinematic = true;
@@ -141,11 +152,11 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
-    private IEnumerator SnapToFace(DiceList dice, Rigidbody rb) {
+    private IEnumerator SnapToFace(GameObject dice, Rigidbody rb) {
 
         int tiltAmount = UnityEngine.Random.Range(0, 360);
-        Quaternion startRot = dice.GameObject.transform.rotation; //coordenadas atuais do dado
-        Quaternion endRot = GetRotationForFace(dice.Face, tiltAmount); // calcula coordenadas finais do dado para ter a face desejada para cima
+        Quaternion startRot = dice.gameObject.transform.rotation; //coordenadas atuais do dado
+        Quaternion endRot = GetRotationForFace(dice.GetComponent<Dice>().GetDiceFace(), tiltAmount); // calcula coordenadas finais do dado para ter a face desejada para cima
 
         float elapsed = 0f;
 
@@ -154,11 +165,11 @@ public class DealerRollDice : MonoBehaviour {
             //float t = t = 1 - Mathf.Pow(1 - elapsed / snapDuration, 2); // sera a fracao dessa interpolacao
             float t = Mathf.Clamp01(elapsed / snapDuration);
             float curveT = snapCurve.Evaluate(t);
-            dice.GameObject.transform.rotation = Quaternion.Slerp(startRot, endRot, curveT);
+            dice.gameObject.transform.rotation = Quaternion.Slerp(startRot, endRot, curveT);
             yield return null; //ele para aqui a cada frame, assim o dado segue girando no sentido que queremos ao decorrer do passar dos frmaes
         }
 
-        dice.GameObject.transform.rotation = endRot;
+        dice.gameObject.transform.rotation = endRot;
 
 
     }
