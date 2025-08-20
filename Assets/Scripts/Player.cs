@@ -105,4 +105,8 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
     public bool HasDiceHandActive() {
         return diceHandActive;
     }
+
+    public void SetDiceHandActive(bool status) {
+        diceHandActive = status;
+    }
 }

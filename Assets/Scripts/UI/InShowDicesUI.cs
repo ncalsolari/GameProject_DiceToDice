@@ -18,7 +18,9 @@ public class InShowDicesUI : MonoBehaviour {
         });
 
         returnMainGameButton.onClick.AddListener(() => {
+
             Hide();
+            GameInput.Instance.EraseDiceInput();
 
         });
 

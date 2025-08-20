@@ -8,6 +8,7 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public event EventHandler OnRollDiceActionTransitionScene;
     public event EventHandler OnRollDiceAction;
     public event EventHandler OnShowDiceAction;
+    public event EventHandler OnEraseDiceAction;
 
     private void Awake() {
         Instance = this;
@@ -26,6 +27,12 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public void ShowDiceInput() {
         Debug.Log("Mostrando os Dados pelo World!");
         OnShowDiceAction?.Invoke(this, EventArgs.Empty);
+
+    }
+
+    public void EraseDiceInput() {
+        Debug.Log("Apagandos Dados");
+        OnEraseDiceAction?.Invoke(this, EventArgs.Empty);
 
     }
 }
