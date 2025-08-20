@@ -58,7 +58,7 @@ public class DealerRollDice : MonoBehaviour {
 
     private void Update() {
 
-        CheckSettling();
+        // CheckSettling();
 
     }
 
