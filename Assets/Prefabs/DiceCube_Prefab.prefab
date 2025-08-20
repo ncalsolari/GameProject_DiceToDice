@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6833078478321338872}
   - component: {fileID: 2257732612133234755}
   - component: {fileID: 708102492494843324}
+  - component: {fileID: 802892606061214488}
   m_Layer: 0
   m_Name: DiceCube_Prefab
   m_TagString: Untagged
@@ -26,14 +27,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433909311590125134}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.41413262, y: -0, z: -0, w: 0.91021657}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.24, y: 10.97, z: 0.1}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2035178181033149014}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -48.929, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2257732612133234755
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -82,6 +83,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &802892606061214488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433909311590125134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 478048e034bf1c329858a5ae7bf85fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  diceSO: {fileID: 11400000, guid: faf03d050c52177d6a92e17065351754, type: 2}
 --- !u!1001 &2058748030267153385
 PrefabInstance:
   m_ObjectHideFlags: 0
