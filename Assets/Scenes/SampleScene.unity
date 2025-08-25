@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 31773753}
   - component: {fileID: 31773752}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: WallRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -317,7 +317,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 31773750}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -377,7 +377,7 @@ GameObject:
   - component: {fileID: 114893408}
   - component: {fileID: 114893407}
   m_Layer: 0
-  m_Name: Plane_Chao
+  m_Name: PlaneGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1425,7 +1425,7 @@ GameObject:
   - component: {fileID: 680900131}
   - component: {fileID: 680900130}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: WallBottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1474,7 +1474,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 680900128}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1588,13 +1588,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  wallLeft: {fileID: 1323353501}
+  wallRight: {fileID: 31773750}
+  wallBottom: {fileID: 680900128}
+  wallTop: {fileID: 990325097}
+  wallRoof: {fileID: 815105133}
   bucketCenter: {fileID: 495867977}
   spawnCenter: {fileID: 585201452}
   spawnHeight: 2
   minLaunchForce: 10
   maxLaunchForce: 300
-  settleThresholdSpeed: 30
-  settleThresholdSpin: 15
+  settleThresholdSpeed: 0.5
+  settleThresholdSpin: 0.5
   snapDuration: 1
 --- !u!1 &687587842
 GameObject:
@@ -2031,7 +2036,7 @@ GameObject:
   - component: {fileID: 815105136}
   - component: {fileID: 815105135}
   m_Layer: 0
-  m_Name: Teto
+  m_Name: WallRoff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2080,7 +2085,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815105133}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2613,7 +2618,7 @@ GameObject:
   - component: {fileID: 990325100}
   - component: {fileID: 990325099}
   m_Layer: 0
-  m_Name: Cube (3)
+  m_Name: WallTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2662,7 +2667,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 990325097}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3568,7 +3573,7 @@ GameObject:
   - component: {fileID: 1323353504}
   - component: {fileID: 1323353503}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: WallLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3617,7 +3622,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1323353501}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

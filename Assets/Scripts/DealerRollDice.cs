@@ -9,6 +9,14 @@ public class DealerRollDice : MonoBehaviour {
 
     public static DealerRollDice Instance { get; private set; }
     [SerializeField] private AnimationCurve snapCurve;
+    [SerializeField] private GameObject wallLeft;
+    [SerializeField] private GameObject wallRight;
+    [SerializeField] private GameObject wallBottom;
+    [SerializeField] private GameObject wallTop;
+    [SerializeField] private GameObject wallRoof;
+
+    private bool allDiceStoped = false;
+
 
     #region VariaveisDeLancamento
     [SerializeField] Transform bucketCenter;
@@ -61,6 +69,22 @@ public class DealerRollDice : MonoBehaviour {
 
         // CheckSettling();
 
+        if (CheckAllDiceStop()) { //muitos checks desnecessarios refatorar
+            HideDiceBoxWalls();
+        }
+
+        //checar essa refatoracao abaixo, DESCOMENTAR LINHA 105
+        /*
+                                if (!allDiceStoped) {
+                                    if (CheckAllDiceStop()) {
+                                        HideDiceBoxWalls();
+                                        allDiceStoped = true;
+
+                                    }
+
+                                }
+                                */
+
     }
 
     private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
@@ -74,9 +98,11 @@ public class DealerRollDice : MonoBehaviour {
             }
         }
 
-        // limpa a lista
-        diceList.Clear();
-        Player.Instance.SetDiceHandActive(false);
+
+        diceList.Clear(); // limpa a lista
+        Player.Instance.SetDiceHandActive(false); //desativo mao do player
+        ShowDiceBoxWalls(); // desativa as paredes da DiceBox pra evitar possiveis travamentos de dados nas paredes
+                            // allDiceStoped = false;//reseta variavel de controle 
     }
 
     public void RollDiceHand(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
@@ -125,8 +151,60 @@ public class DealerRollDice : MonoBehaviour {
         return 0;
     }
 
+    private bool CheckAllDiceStop() {
+
+        bool allDiceStoped = false;
+        //para cada dado checo se algum deles esta parando
+        for (int i = 0; i < diceList.Count; i++) {
+            Dice diceScript = diceList[i].GetComponent<Dice>();
+
+            if (!diceScript.IsDiceSettling()) { //se o dado esta parando seto a flag para true e vou para o proximo dado
+                Rigidbody rb = diceList[i].gameObject.GetComponent<Rigidbody>();
+                Debug.Log("vel:" + i + "= " + rb.angularVelocity.magnitude);
+
+                if (rb.linearVelocity.magnitude < settleThresholdSpeed && rb.angularVelocity.magnitude < settleThresholdSpin) { //dado esta parando
+                    diceScript.SetDiceSettling(true);
+
+                }
+                else { //se pelo menos 1 dado nao esta parando eu ja retorno false
+                    allDiceStoped = false;
+                    return allDiceStoped;
+                }
+            }
+            else {
+                allDiceStoped = true;
+            }
+
+        }
+
+        return allDiceStoped;
+
+    }
+
+    private void HideDiceBoxWalls() {
+
+        wallLeft.gameObject.SetActive(false);
+        wallRight.gameObject.SetActive(false);
+        wallBottom.gameObject.SetActive(false);
+        wallTop.gameObject.SetActive(false);
+        wallRoof.gameObject.SetActive(false);
+
+    }
+
+    private void ShowDiceBoxWalls() {
+
+        wallLeft.gameObject.SetActive(true);
+        wallRight.gameObject.SetActive(true);
+        wallBottom.gameObject.SetActive(true);
+        wallTop.gameObject.SetActive(true);
+        wallRoof.gameObject.SetActive(true);
+
+    }
+
+    #region FakeRoll
 
     private void CheckSettling() {
+
         //para cada dado checo se algum deles esta parando
         for (int i = 0; i < diceList.Count; i++) {
             Dice diceScript = diceList[i].GetComponent<Dice>();
@@ -146,6 +224,7 @@ public class DealerRollDice : MonoBehaviour {
                 }
 
             }
+
 
 
         }
@@ -188,5 +267,8 @@ public class DealerRollDice : MonoBehaviour {
         }
 
     }
+    #endregion
+
+
 
 }
