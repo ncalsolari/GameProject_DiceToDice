@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
 using System.Collections;
+using UnityEditor.AssetImporters;
 
 public class DealerRollDice : MonoBehaviour {
 
@@ -15,8 +16,9 @@ public class DealerRollDice : MonoBehaviour {
     [SerializeField] private GameObject wallTop;
     [SerializeField] private GameObject wallRoof;
 
-    private bool allDiceStoped = false;
-
+    private bool allDiceStoped = true;
+    private bool diceBoxDiseabled = false;
+    private bool getFaceUpTime = false;
 
     #region VariaveisDeLancamento
     [SerializeField] Transform bucketCenter;
@@ -67,23 +69,9 @@ public class DealerRollDice : MonoBehaviour {
 
     private void Update() {
 
-        // CheckSettling();
-
-        if (CheckAllDiceStop()) { //muitos checks desnecessarios refatorar
-            HideDiceBoxWalls();
-        }
-
-        //checar essa refatoracao abaixo, DESCOMENTAR LINHA 105
-        /*
-                                if (!allDiceStoped) {
-                                    if (CheckAllDiceStop()) {
-                                        HideDiceBoxWalls();
-                                        allDiceStoped = true;
-
-                                    }
-
-                                }
-                                */
+        //a logica precisa ser repensada para a 2 parada, talvez por um delay de 1s
+        ReshuffleDiceStop(); // maneja as 2 instancias de parada dos dados (1 antes das paredes serem desabilidatas, 2 dps das paredes serem desabilitadas)
+        GetDiceFaces(); //define as faces voltadas para cima
 
     }
 
@@ -101,8 +89,7 @@ public class DealerRollDice : MonoBehaviour {
 
         diceList.Clear(); // limpa a lista
         Player.Instance.SetDiceHandActive(false); //desativo mao do player
-        ShowDiceBoxWalls(); // desativa as paredes da DiceBox pra evitar possiveis travamentos de dados nas paredes
-                            // allDiceStoped = false;//reseta variavel de controle 
+        ShowDiceBoxWalls(); // reativa as paredes da DiceBox 
     }
 
     public void RollDiceHand(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
@@ -142,26 +129,130 @@ public class DealerRollDice : MonoBehaviour {
             // img.sprite = diceSOList[d].faces[diceValue[d] - 1];
         }
 
+        diceBoxDiseabled = false;
+        allDiceStoped = false; //ReshuffleDiceStop comeca a fazer a checagem
+
     }
 
-    public int GetFaceUp() {
+    public int GetFaceUp(GameObject localDice) {
+
+        float crossProductX;
+        float crossProductY;
+        float crossProductZ;
+        float minCrossProduct = -1;
+        int resultCrossProduct;// 1=eixo X, 2=eixo Y; 3=eixo Z
+
+        float dotProduct;
+
+        //calculo o cross product, area do paralelogramo q os dois vetores formam. Se igual a zero, eles sao paralelos
+        crossProductX = Vector3.Cross(Vector3.up, localDice.transform.right).magnitude;
+        crossProductY = Vector3.Cross(Vector3.up, localDice.transform.up).magnitude;
+        crossProductZ = Vector3.Cross(Vector3.up, localDice.transform.forward).magnitude;
+
+        //o menor seria o mais proximo de 0, o mais paralelo possivel com o eixo Y
+        minCrossProduct = crossProductX;
+        resultCrossProduct = 1;
+        if (crossProductY < minCrossProduct) {
+            minCrossProduct = crossProductY;
+            resultCrossProduct = 2;
+        }
+        if (crossProductZ < minCrossProduct) {
+            minCrossProduct = crossProductZ;
+            resultCrossProduct = 3;
+        }
 
 
+        //depois de definido qual direcao esta para cima (x, y ou z) acho qual o sentido que esta para cima
+        switch (resultCrossProduct) {
+            case 1:
+                dotProduct = Vector3.Dot(Vector3.up, localDice.transform.right);//se +1 o vector3.up tem mesmo sentido q transform.right, se -1 entao vec3.up tem sentido oposto do transform.right
+                if (dotProduct > 0) {//quais direcoes e sentidos representam quais faces? esta definido no prefab no unity, lembrar de manter o padrao de direcao para diferentes dados
+                    return 3;
+                }
+                else {
+                    return 4;
+                }
+            case 2:
+                dotProduct = Vector3.Dot(Vector3.up, localDice.transform.up);
+                if (dotProduct > 0) {
+                    return 2;
+                }
+                else {
+                    return 5;
+                }
+            case 3:
+                dotProduct = Vector3.Dot(Vector3.up, localDice.transform.forward);
+                if (dotProduct > 0) {
+                    return 1;
+                }
+                else {
+                    return 6;
+                }
+            default: return -1;
 
-        return 0;
+        }
     }
 
-    private bool CheckAllDiceStop() {
+    //CONTROLE DOS 2 MOMENTOS DE PARADA DOS DADOS E DESABILITAR DICEBOX WALLS
+    private void ReshuffleDiceStop() {
+
+
+        if (!allDiceStoped) {//checo se os dados estao parados
+            Debug.Log("Dados em momivento");
+            if (!diceBoxDiseabled) { //primeiro os dados param, desabilito as paredes da caixa, os dados voltam a se mover (pode haver troca de face ainda) entao mantenho a flag de dados em movimento
+                Debug.Log("DiceBox Habilitada");
+                if (CheckAllDiceStop()) {
+                    Debug.Log("Primeira parada dos dados");
+                    HideDiceBoxWalls();//desabilito walls
+                    diceBoxDiseabled = true;//muda a flag, agra muda para a checagem para a segunda e definitiva para dos dados
+                }
+
+
+            }
+            else { //paredes ja foram desabilitadas, movimento final do dado
+                Debug.Log("DiceBox Desabilitada");
+                if (CheckAllDiceStop()) {
+                    Debug.Log("Segunda parada dos dados");
+                    allDiceStoped = true;
+                    getFaceUpTime = true;
+
+                }
+            }
+
+        }
+
+    }
+
+    //RETORNA AS FACES DE TODOS OS DADOS DA MAO
+    //incompleto
+    private void GetDiceFaces() {
+        if (getFaceUpTime) {
+            for (int i = 0; i < diceList.Count; i++) {
+                int a = GetFaceUp(diceList[i]);
+                Debug.Log("Face: " + a);
+
+            }
+
+            getFaceUpTime = false;
+
+        }
+    }
+
+
+    //CHECAGEM DE DADOS PARADOS OU NAO
+    //obs: se todos os dados estiverem parando dentro do mesmo frame, soh ira considerar os dados parados no frame seguinte
+    //n acho q eh algo digno de refatoracao nao, eu penso q esse bug n traz nada d prejudicial 
+    private bool CheckAllDiceStop() { //checa quando todos os dados estao parados, usado para desativar as paredes da caixa
 
         bool allDiceStoped = false;
         //para cada dado checo se algum deles esta parando
         for (int i = 0; i < diceList.Count; i++) {
             Dice diceScript = diceList[i].GetComponent<Dice>();
 
-            if (!diceScript.IsDiceSettling()) { //se o dado esta parando seto a flag para true e vou para o proximo dado
+            if (!diceScript.IsDiceSettling()) { //se o dado ja estava parando seto a flag para true e vou para o proximo dado, se nao eu entro no if e checo se agra o dado esta parando
                 Rigidbody rb = diceList[i].gameObject.GetComponent<Rigidbody>();
-                Debug.Log("vel:" + i + "= " + rb.angularVelocity.magnitude);
 
+                //checo os limites para considerar dado em movimento ou parado
                 if (rb.linearVelocity.magnitude < settleThresholdSpeed && rb.angularVelocity.magnitude < settleThresholdSpin) { //dado esta parando
                     diceScript.SetDiceSettling(true);
 
@@ -181,6 +272,8 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
+
+    //DESABILITAR DICEBOX WALLS
     private void HideDiceBoxWalls() {
 
         wallLeft.gameObject.SetActive(false);
@@ -191,6 +284,7 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
+    //HABILITAR DICEBOXWALL
     private void ShowDiceBoxWalls() {
 
         wallLeft.gameObject.SetActive(true);
@@ -201,6 +295,8 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
+
+    //OPCAO DE FAKEROLL DESCONTINUADA (MOVIMENTO DE LANCAMENTO DOS DADOS NAO ESTAVA FLUIDO)
     #region FakeRoll
 
     private void CheckSettling() {
