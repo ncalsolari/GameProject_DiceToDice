@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2257732612133234755}
   - component: {fileID: 708102492494843324}
   - component: {fileID: 802892606061214488}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DiceCube_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
