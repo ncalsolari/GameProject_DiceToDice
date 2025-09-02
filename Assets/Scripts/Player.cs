@@ -35,6 +35,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
 
         GameInput.Instance.OnRollDiceAction += GameInput_OnRollDiceAction;
         GameInput.Instance.OnShowDiceAction += GameInput_OnShowDiceAction;
+        GameInput.Instance.OnRemoveDiceAction += GameInput_OnRemoveDiceAction;
 
         ResetHand();
     }
@@ -61,6 +62,10 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
     private void GameInput_OnShowDiceAction(object sender, EventArgs e) {
         ShowDiceHand();
 
+    }
+
+    private void GameInput_OnRemoveDiceAction(object sender, EventArgs e) {
+        DealerRemoveDice.Instance.ShowRemoveDiceList(diceSOList, actualDiceQnt, diceValue);
     }
 
     private void RollDiceHand() {

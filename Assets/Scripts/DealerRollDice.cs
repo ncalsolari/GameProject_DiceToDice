@@ -226,7 +226,7 @@ public class DealerRollDice : MonoBehaviour {
     //RETORNA AS FACES DE TODOS OS DADOS DA MAO
     //incompleto
     private void GetDiceFaces() {
-        if (getFaceUpTime) {
+        if (getFaceUpTime) { //talvez usar uma coroutine ao inves dessa variavel boolean 
             for (int i = 0; i < diceList.Count; i++) {
                 int a = GetFaceUp(diceList[i]);
                 Debug.Log("Face: " + a);
@@ -284,7 +284,7 @@ public class DealerRollDice : MonoBehaviour {
 
     }
 
-    //HABILITAR DICEBOXWALL
+    //HABILITAR DICEBOX WALLS
     private void ShowDiceBoxWalls() {
 
         wallLeft.gameObject.SetActive(true);

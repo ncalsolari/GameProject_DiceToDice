@@ -7,6 +7,8 @@ public class InGamePlayerUI : MonoBehaviour {
     [SerializeField] private Button rollDiceButton;
     [SerializeField] private Button showDiceButton;
 
+    [SerializeField] private Button removeDiceButton;
+
 
     private void Awake() {
 
@@ -21,6 +23,9 @@ public class InGamePlayerUI : MonoBehaviour {
 
         });
 
+        removeDiceButton.onClick.AddListener(() => {
+            GameInput.Instance.RemoveDiceInputTransitionScene();
+        });
 
     }
 
