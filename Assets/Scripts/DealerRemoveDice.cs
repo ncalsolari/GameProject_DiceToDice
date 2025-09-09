@@ -7,6 +7,7 @@ public class DealerRemoveDice : MonoBehaviour {
     public static DealerRemoveDice Instance { get; private set; }
 
     [SerializeField] private List<Transform> dicePositionList = new List<Transform>();
+
     private float rotationSpeed;
     private float floatOffset;
     public float minRotationSpeed = 7f;
@@ -21,17 +22,75 @@ public class DealerRemoveDice : MonoBehaviour {
     private List<GameObject> diceList = new List<GameObject>();
     private List<Vector2> offsetList = new List<Vector2>();
 
+    private List<float> baseRotSpeed = new();
+    private List<float> currentRotSpeed = new();
+    private List<float> baseFloatPos = new();
+
     private void Awake() {
         Instance = this;
+
     }
 
     private void Start() {
+        GameInput.Instance.OnSelectedDiceToRemove += GameInput_OnSelectedDiceToRemove;
 
     }
 
     private void Update() {
         FloatingDices(diceList);
     }
+
+    private void GameInput_OnSelectedDiceToRemove(object sender, GameInput.OnSelectedDiceToRemoveEventArgs e) {
+
+        if (e.indexSelectedDice <= diceList.Count) { //se eu apertar no botao aonde nao tem mais dado ele nao faz nada
+            for (int i = 0; i < diceList.Count; i++) {//varre meus dados
+                if (e.indexSelectedDice == i + 1) {//se for o dado do indice do botao selecionad
+                    Debug.Log(diceList[i]);//remover linha
+                    Debug.Log(diceList[i].GetComponentInChildren<SelectedDiceVisual>());//remover linha
+                    diceList[i].GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(false);//seleciona o componente com o script do visual selecionado
+                    BoostDiceRotation(i, 50f, 2f);//boost de rotacao
+                }
+                else {
+                    diceList[i].GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(true);//desseleciona visualmente os outros
+                }
+            }
+        }
+
+    }
+
+
+    public void BoostDiceRotation(int diceIndex, float multiplier, float duration) {
+        StartCoroutine(BoostRoutine(diceIndex, multiplier, duration));
+    }
+
+    private System.Collections.IEnumerator BoostRoutine(int diceIndex, float multiplier, float duration) {
+        float original = baseRotSpeed[diceIndex];//guardo rot inicial
+        float boosted = original * multiplier;//calculo o boost
+        float elapsed = 0f;
+
+        while (elapsed < duration) { //durante o tempo selecionado adiciono a rotacao com aceleracao e desaceleracao
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / duration); //efeito desacelera mais rapido no comeco doq no fim
+                                                                    //mudar essa func muda como o dado acelera/desacelera, procurar outros modelos talvez
+
+            //interpola a velocidade
+            baseRotSpeed[diceIndex] = Mathf.Lerp(boosted, original, t);
+
+            yield return null; // espera 1 frame e continua
+
+        }
+
+        //transicao estava dura
+        // baseRotSpeed[diceIndex] = original * multiplier;
+        //yield return new WaitForSeconds(duration);
+
+        baseRotSpeed[diceIndex] = original; // volta ao normal
+    }
+
+
+
+
+
 
     public void ShowRemoveDiceList(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
 
@@ -40,9 +99,16 @@ public class DealerRemoveDice : MonoBehaviour {
 
             Vector3 spawnPos = dicePositionList[i].position;//pega posicao do unity
             GameObject dice = Instantiate(playerDiceList[i].prefab, spawnPos, UnityEngine.Random.rotation, transform);
+
             Dice diceScript = dice.GetComponent<Dice>();
             Rigidbody rb = dice.GetComponent<Rigidbody>();
             rb.isKinematic = true;//tira fisica
+            if (i == 0) {
+                dice.GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(false);
+            }
+            else {
+                dice.GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(true);
+            }
 
             diceList.Add(dice);
 
@@ -50,6 +116,8 @@ public class DealerRemoveDice : MonoBehaviour {
             if (UnityEngine.Random.value > 0.5f) rotationSpeed *= -1;//pode ser que ele gire para o outro lado
             floatOffset = UnityEngine.Random.Range(0f, Mathf.PI * 2f);//offset no efeito de flutuacao 
 
+            baseRotSpeed.Add(rotationSpeed);
+            baseFloatPos.Add(floatOffset);
             offsetList.Add(new Vector2(rotationSpeed, floatOffset));//guarda valroes para movimento de flutuacao
 
         }
@@ -60,8 +128,8 @@ public class DealerRemoveDice : MonoBehaviour {
 
         for (int i = 0; i < diceList.Count; i++) {//pra cada dado
             localDice = diceList[i];//o dado em si
-            float rotSpeed = offsetList[i].x;//recupero dados gerados no momento de instanciamento do dado
-            float floatPos = offsetList[i].y;
+            float rotSpeed = baseRotSpeed[i];//recupero dados gerados no momento de instanciamento do dado
+            float floatPos = baseFloatPos[i];
             startPosition = localDice.transform.position;//guardo posicao inicial
             baseRotation = localDice.transform.rotation;//guardo rotacao inicial
             yRotation = Quaternion.Euler(0, Time.deltaTime * rotSpeed, 0);//rotacao dependendo do tempo

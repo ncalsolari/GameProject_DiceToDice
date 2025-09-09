@@ -12,7 +12,14 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public event EventHandler OnEraseDiceAction;
     public event EventHandler OnRemoveDiceAction;
 
+    public event EventHandler<OnSelectedDiceToRemoveEventArgs> OnSelectedDiceToRemove;
+    public class OnSelectedDiceToRemoveEventArgs : EventArgs {
+        public int indexSelectedDice;
+    }
     private void Awake() {
+        if (Instance != null) {
+            Debug.LogError("There is more than one GameInput instance");
+        }
         Instance = this;
     }
 
@@ -47,6 +54,14 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public void RemoveDiceInput() {
         Debug.Log("Removendo dados");
         OnRemoveDiceAction?.Invoke(this, EventArgs.Empty);
+
+    }
+
+    public void SelectDiceToRemove(int index) {
+        Debug.Log("Selecionando os dados para remover");
+        OnSelectedDiceToRemove?.Invoke(this, new OnSelectedDiceToRemoveEventArgs {
+            indexSelectedDice = index
+        });
 
     }
 }

@@ -8,6 +8,11 @@ public class InRemoveDicesUI : MonoBehaviour {
 
     [SerializeField] private Button removeDiceButton;
     [SerializeField] private Button returnMainGameButton;
+    [SerializeField] private Button selectDice1;
+    [SerializeField] private Button selectDice2;
+    [SerializeField] private Button selectDice3;
+    [SerializeField] private Button selectDice4;
+    [SerializeField] private Button selectDice5;
 
 
     private void Awake() {
@@ -18,6 +23,36 @@ public class InRemoveDicesUI : MonoBehaviour {
             DealerRemoveDice.Instance.EraseDices(); //aqui talvez eu deva refatorar pra essa classe se comunicar com o GameInput e nao direto cm o dealer, 
                                                     // tipo a func GameInput_OnRemoveDiceActionTransitionScene ali embaixo
                                                     //aqui ele soh apaga os prefabs da Scene, talvez eu tenha que estruturar melhor essa logica
+        });
+
+        selectDice1.onClick.AddListener(() => {
+            Debug.Log("Selecionando dado 1!");
+            GameInput.Instance.SelectDiceToRemove(1);
+
+        });
+
+        selectDice2.onClick.AddListener(() => {
+            Debug.Log("Selecionando dado 2!");
+            GameInput.Instance.SelectDiceToRemove(2);
+
+        });
+
+        selectDice3.onClick.AddListener(() => {
+            Debug.Log("Selecionando dado 3!");
+            GameInput.Instance.SelectDiceToRemove(3);
+
+        });
+
+        selectDice4.onClick.AddListener(() => {
+            Debug.Log("Selecionando dado 4!");
+            GameInput.Instance.SelectDiceToRemove(4);
+
+        });
+
+        selectDice5.onClick.AddListener(() => {
+            Debug.Log("Selecionando dado 5!");
+            GameInput.Instance.SelectDiceToRemove(5);
+
         });
     }
 
