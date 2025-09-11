@@ -16,6 +16,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
 
     [SerializeField] private GameInput gameInput;
     [SerializeField] private List<DiceSO> diceSOList = new List<DiceSO>();
+    private List<DiceSO> diceSOListCopy = new List<DiceSO>();
     [SerializeField] private List<Transform> dicePositionList = new List<Transform>();
 
 
@@ -30,6 +31,8 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
             Debug.LogError("There is more than one Player instance");
         }
         Instance = this;
+
+        diceSOListCopy = diceSOList;
     }
     private void Start() {
 
@@ -42,19 +45,11 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
 
 
     private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
-        ResetHand();
-        RollDiceHand();
-        diceHandActive = true;
-        for (int i = 0; i < actualDiceQnt; i++) {
-            Debug.Log("face do dado " + (i + 1) + ": " + diceValue[i] + "\n");
-        }
-        Debug.Log("\n\n\n");
-        for (int i = 0; i < 6; i++) {
-            Debug.Log("qnt de faces " + (i + 1) + ": " + diceQnt[i] + "\n");
-        }
 
-        DealerRollDice.Instance.RollDiceHand(diceSOList, actualDiceQnt, diceValue);
-
+        if (!diceHandActive) {
+            DealerRollDice.Instance.RollDiceHand(diceSOListCopy, actualDiceQnt, diceValue);
+            diceHandActive = true;
+        }
 
     }
 
@@ -65,7 +60,7 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
     }
 
     private void GameInput_OnRemoveDiceAction(object sender, EventArgs e) {
-        DealerRemoveDice.Instance.ShowRemoveDiceList(diceSOList, actualDiceQnt, diceValue);
+        DealerRemoveDice.Instance.ShowRemoveDiceList(diceSOListCopy, actualDiceQnt, diceValue);
     }
 
     private void RollDiceHand() {
@@ -113,5 +108,34 @@ public class Player : MonoBehaviour // Essa classe guarda as infos do player e l
 
     public void SetDiceHandActive(bool status) {
         diceHandActive = status;
+    }
+
+    public void SetDiceValues(List<GameObject> diceList) {
+        ResetHand();
+
+        for (int i = 0; i < diceList.Count; i++) {
+
+
+
+            if (diceValue[i] >= 0) { //se o valor for -1 eu perdi este dado, nao atribuo valor a ele
+                int diceFace = diceList[i].GetComponent<Dice>().GetDiceFace();
+
+                diceValue[i] = diceFace; //face do dado
+                diceQnt[diceFace - 1] += 1; // qntdade de dados com essa face
+
+                Debug.Log("Face dado" + i + ": " + diceFace);
+            }
+
+        }
+
+    }
+
+    public void RemoveSelectedDice(int index) {
+
+        diceSOListCopy.RemoveAt(index);
+        actualDiceQnt -= 1;
+        diceValue[actualDiceQnt] = -1;
+
+
     }
 }

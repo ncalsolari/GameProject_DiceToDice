@@ -63,7 +63,7 @@ public class DealerRollDice : MonoBehaviour {
     private void Start() {
 
         GameInput.Instance.OnRollDiceAction += GameInput_OnRollDiceAction;
-        GameInput.Instance.OnEraseDiceAction += GameInput_OnRollEraseAction;
+        GameInput.Instance.OnEraseDiceAction += GameInput_OnEraseDiceAction;
 
     }
 
@@ -71,14 +71,14 @@ public class DealerRollDice : MonoBehaviour {
 
         //a logica precisa ser repensada para a 2 parada, talvez por um delay de 1s
         ReshuffleDiceStop(); // maneja as 2 instancias de parada dos dados (1 antes das paredes serem desabilidatas, 2 dps das paredes serem desabilitadas)
-        GetDiceFaces(); //define as faces voltadas para cima
+
 
     }
 
     private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
 
     }
-    private void GameInput_OnRollEraseAction(object sender, EventArgs e) {
+    private void GameInput_OnEraseDiceAction(object sender, EventArgs e) {
         // percorre todos os dados instanciados e destrói
         foreach (var diceEntry in diceList) {
             if (diceEntry.gameObject != null) {
@@ -132,6 +132,62 @@ public class DealerRollDice : MonoBehaviour {
         diceBoxDiseabled = false;
         allDiceStoped = false; //ReshuffleDiceStop comeca a fazer a checagem
 
+    }
+
+
+
+    //CONTROLE DOS 2 MOMENTOS DE PARADA DOS DADOS E DESABILITAR DICEBOX WALLS
+    private void ReshuffleDiceStop() {
+
+
+        if (!allDiceStoped) {//checo se os dados estao parados
+            Debug.Log("Dados em momivento");
+            if (!diceBoxDiseabled) { //primeiro os dados param, desabilito as paredes da caixa, os dados voltam a se mover (pode haver troca de face ainda) entao mantenho a flag de dados em movimento
+                Debug.Log("DiceBox Habilitada");
+                if (CheckAllDiceStop()) {
+                    Debug.Log("Primeira parada dos dados");
+                    HideDiceBoxWalls();//desabilito walls
+                    diceBoxDiseabled = true;//muda a flag, agra muda para a checagem para a segunda e definitiva para dos dados
+                }
+
+
+            }
+            else { //paredes ja foram desabilitadas, movimento final do dado
+                Debug.Log("DiceBox Desabilitada");
+                if (CheckAllDiceStop()) {
+                    Debug.Log("Segunda parada dos dados");
+                    allDiceStoped = true;
+                    getFaceUpTime = true;
+
+                    GetDiceFaces(); //define as faces voltadas para cima
+
+                    Player.Instance.SetDiceValues(this.diceList);// atualiza mao do player
+
+                }
+            }
+
+        }
+
+    }
+
+    //RETORNA AS FACES DE TODOS OS DADOS DA MAO
+    //incompleto
+    private void GetDiceFaces() {
+        if (getFaceUpTime) { //talvez usar uma coroutine ao inves dessa variavel boolean 
+            for (int i = 0; i < diceList.Count; i++) {
+
+                int faceNumber = GetFaceUp(diceList[i]);
+                Debug.Log("Face: " + faceNumber);
+
+                Dice diceScript = diceList[i].GetComponent<Dice>();
+                diceScript.SetDiceFace(faceNumber);
+
+
+            }
+
+            getFaceUpTime = false;
+
+        }
     }
 
     public int GetFaceUp(GameObject localDice) {
@@ -189,51 +245,6 @@ public class DealerRollDice : MonoBehaviour {
                     return 6;
                 }
             default: return -1;
-
-        }
-    }
-
-    //CONTROLE DOS 2 MOMENTOS DE PARADA DOS DADOS E DESABILITAR DICEBOX WALLS
-    private void ReshuffleDiceStop() {
-
-
-        if (!allDiceStoped) {//checo se os dados estao parados
-            Debug.Log("Dados em momivento");
-            if (!diceBoxDiseabled) { //primeiro os dados param, desabilito as paredes da caixa, os dados voltam a se mover (pode haver troca de face ainda) entao mantenho a flag de dados em movimento
-                Debug.Log("DiceBox Habilitada");
-                if (CheckAllDiceStop()) {
-                    Debug.Log("Primeira parada dos dados");
-                    HideDiceBoxWalls();//desabilito walls
-                    diceBoxDiseabled = true;//muda a flag, agra muda para a checagem para a segunda e definitiva para dos dados
-                }
-
-
-            }
-            else { //paredes ja foram desabilitadas, movimento final do dado
-                Debug.Log("DiceBox Desabilitada");
-                if (CheckAllDiceStop()) {
-                    Debug.Log("Segunda parada dos dados");
-                    allDiceStoped = true;
-                    getFaceUpTime = true;
-
-                }
-            }
-
-        }
-
-    }
-
-    //RETORNA AS FACES DE TODOS OS DADOS DA MAO
-    //incompleto
-    private void GetDiceFaces() {
-        if (getFaceUpTime) { //talvez usar uma coroutine ao inves dessa variavel boolean 
-            for (int i = 0; i < diceList.Count; i++) {
-                int a = GetFaceUp(diceList[i]);
-                Debug.Log("Face: " + a);
-
-            }
-
-            getFaceUpTime = false;
 
         }
     }

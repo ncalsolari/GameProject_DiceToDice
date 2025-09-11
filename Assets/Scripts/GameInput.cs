@@ -11,6 +11,7 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public event EventHandler OnShowDiceAction;
     public event EventHandler OnEraseDiceAction;
     public event EventHandler OnRemoveDiceAction;
+    public event EventHandler OnRemoveSelectedDiceAction;
 
     public event EventHandler<OnSelectedDiceToRemoveEventArgs> OnSelectedDiceToRemove;
     public class OnSelectedDiceToRemoveEventArgs : EventArgs {
@@ -51,12 +52,17 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
 
     }
 
-    public void RemoveDiceInput() {
+    public void RemoveDiceInput() { //essa func eh soh pra exibicao da pagina de remocao, acho q ta cm redundancia, rever
         Debug.Log("Removendo dados");
         OnRemoveDiceAction?.Invoke(this, EventArgs.Empty);
 
     }
 
+    public void RemoveSelectedDiceInput() {
+        Debug.Log("Removendo dado selecionado");
+        OnRemoveSelectedDiceAction?.Invoke(this, EventArgs.Empty);
+
+    }
     public void SelectDiceToRemove(int index) {
         Debug.Log("Selecionando os dados para remover");
         OnSelectedDiceToRemove?.Invoke(this, new OnSelectedDiceToRemoveEventArgs {

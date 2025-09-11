@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Dice : MonoBehaviour {
     [SerializeField] private DiceSO diceSO;
-    private int face;
+    private int faceUp = -1;
     private bool IsSettling = false;
 
 
@@ -10,11 +10,11 @@ public class Dice : MonoBehaviour {
         return diceSO;
     }
     public void SetDiceFace(int value) {
-        face = value;
+        faceUp = value;
     }
 
     public int GetDiceFace() {
-        return face;
+        return faceUp;
     }
 
     public void SetDiceSettling(bool value) {

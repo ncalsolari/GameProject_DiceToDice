@@ -4,9 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class DealerRemoveDice : MonoBehaviour {
+
+    const int DICE_QNT = 5;
     public static DealerRemoveDice Instance { get; private set; }
 
     [SerializeField] private List<Transform> dicePositionList = new List<Transform>();
+    private int selectedDice;
+
+    private bool[] diceIsBoostin = new bool[DICE_QNT];
+
 
     private float rotationSpeed;
     private float floatOffset;
@@ -33,6 +39,7 @@ public class DealerRemoveDice : MonoBehaviour {
 
     private void Start() {
         GameInput.Instance.OnSelectedDiceToRemove += GameInput_OnSelectedDiceToRemove;
+        GameInput.Instance.OnRemoveSelectedDiceAction += GameInput_OnRemoveSelectedDiceAction;
 
     }
 
@@ -45,10 +52,12 @@ public class DealerRemoveDice : MonoBehaviour {
         if (e.indexSelectedDice <= diceList.Count) { //se eu apertar no botao aonde nao tem mais dado ele nao faz nada
             for (int i = 0; i < diceList.Count; i++) {//varre meus dados
                 if (e.indexSelectedDice == i + 1) {//se for o dado do indice do botao selecionad
-                    Debug.Log(diceList[i]);//remover linha
-                    Debug.Log(diceList[i].GetComponentInChildren<SelectedDiceVisual>());//remover linha
                     diceList[i].GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(false);//seleciona o componente com o script do visual selecionado
                     BoostDiceRotation(i, 50f, 2f);//boost de rotacao
+
+                    selectedDice = e.indexSelectedDice;
+
+
                 }
                 else {
                     diceList[i].GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(true);//desseleciona visualmente os outros
@@ -58,9 +67,22 @@ public class DealerRemoveDice : MonoBehaviour {
 
     }
 
+    private void GameInput_OnRemoveSelectedDiceAction(object sender, EventArgs e) {
+
+        Destroy(diceList[selectedDice - 1].gameObject);
+        diceList.RemoveAt(selectedDice - 1);
+        Player.Instance.RemoveSelectedDice(selectedDice - 1);
+
+    }
+
 
     public void BoostDiceRotation(int diceIndex, float multiplier, float duration) {
-        StartCoroutine(BoostRoutine(diceIndex, multiplier, duration));
+
+        if (!diceIsBoostin[diceIndex]) {
+            diceIsBoostin[diceIndex] = true;
+            StartCoroutine(BoostRoutine(diceIndex, multiplier, duration));
+        }
+
     }
 
     private System.Collections.IEnumerator BoostRoutine(int diceIndex, float multiplier, float duration) {
@@ -85,6 +107,7 @@ public class DealerRemoveDice : MonoBehaviour {
         //yield return new WaitForSeconds(duration);
 
         baseRotSpeed[diceIndex] = original; // volta ao normal
+        diceIsBoostin[diceIndex] = false;
     }
 
 
@@ -119,6 +142,8 @@ public class DealerRemoveDice : MonoBehaviour {
             baseRotSpeed.Add(rotationSpeed);
             baseFloatPos.Add(floatOffset);
             offsetList.Add(new Vector2(rotationSpeed, floatOffset));//guarda valroes para movimento de flutuacao
+
+            diceIsBoostin[i] = false;
 
         }
 

@@ -25,6 +25,14 @@ public class InRemoveDicesUI : MonoBehaviour {
                                                     //aqui ele soh apaga os prefabs da Scene, talvez eu tenha que estruturar melhor essa logica
         });
 
+        removeDiceButton.onClick.AddListener(() => {
+            Debug.Log("Apagando dado selecionado!");
+            GameInput.Instance.RemoveSelectedDiceInput();
+
+
+        });
+
+
         selectDice1.onClick.AddListener(() => {
             Debug.Log("Selecionando dado 1!");
             GameInput.Instance.SelectDiceToRemove(1);
