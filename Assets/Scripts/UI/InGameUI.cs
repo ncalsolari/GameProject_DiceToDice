@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InGamePlayerUI : MonoBehaviour {
+public class InGameUI : MonoBehaviour {
 
     [SerializeField] private Button rollDiceButton;
     [SerializeField] private Button showDiceButton;
