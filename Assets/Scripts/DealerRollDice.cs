@@ -9,6 +9,8 @@ using UnityEditor.AssetImporters;
 public class DealerRollDice : MonoBehaviour {
 
     public static DealerRollDice Instance { get; private set; }
+
+    public event EventHandler OnAllDiceStoped;
     [SerializeField] private AnimationCurve snapCurve;
     [SerializeField] private GameObject wallLeft;
     [SerializeField] private GameObject wallRight;
@@ -35,25 +37,12 @@ public class DealerRollDice : MonoBehaviour {
     private float maxSpinForce = 6f;
     #endregion
 
-    #region VariaveisDeFalsoRolamento
-    private class DiceList {
-        public GameObject GameObject { get; set; }
-        public int Face { get; set; }
-        public bool IsSettling { get; set; }
 
-        public DiceList(GameObject gameObject, int face) {
-            this.GameObject = gameObject;
-            this.Face = face;
-            this.IsSettling = false;
-        }
-    }
-    private List<DiceList> diceList2 = new List<DiceList>();
+
     private List<GameObject> diceList = new List<GameObject>();
     public float settleThresholdSpeed = 1f;
     public float settleThresholdSpin = 0.4f;
-    public float snapDuration = 1f;
 
-    #endregion
     private void Awake() {
 
 
@@ -160,8 +149,9 @@ public class DealerRollDice : MonoBehaviour {
                     getFaceUpTime = true;
 
                     GetDiceFaces(); //define as faces voltadas para cima
-
                     Player.Instance.SetDiceValues(this.diceList);// atualiza mao do player
+
+                    OnAllDiceStoped?.Invoke(this, EventArgs.Empty);
 
                 }
             }
@@ -307,74 +297,6 @@ public class DealerRollDice : MonoBehaviour {
     }
 
 
-    //OPCAO DE FAKEROLL DESCONTINUADA (MOVIMENTO DE LANCAMENTO DOS DADOS NAO ESTAVA FLUIDO)
-    #region FakeRoll
-
-    private void CheckSettling() {
-
-        //para cada dado checo se algum deles esta parando
-        for (int i = 0; i < diceList.Count; i++) {
-            Dice diceScript = diceList[i].GetComponent<Dice>();
-
-            if (!diceScript.IsDiceSettling()) {
-
-                Rigidbody rb = diceScript.gameObject.GetComponent<Rigidbody>();
-
-                if (rb.linearVelocity.magnitude < settleThresholdSpeed && rb.angularVelocity.magnitude < settleThresholdSpin) { //dado esta parando
-
-                    diceScript.SetDiceSettling(true);
-                    // rb.linearVelocity = Vector3.zero;
-                    rb.angularVelocity = Vector3.zero;
-                    // rb.isKinematic = true;
-                    StartCoroutine(SnapToFace(diceList[i], rb));//comeco a coroutine de direcionar o dado para a face desejada
-
-                }
-
-            }
-
-
-
-        }
-
-    }
-
-    private IEnumerator SnapToFace(GameObject dice, Rigidbody rb) {
-
-        int tiltAmount = UnityEngine.Random.Range(0, 360);
-        Quaternion startRot = dice.gameObject.transform.rotation; //coordenadas atuais do dado
-        Quaternion endRot = GetRotationForFace(dice.GetComponent<Dice>().GetDiceFace(), tiltAmount); // calcula coordenadas finais do dado para ter a face desejada para cima
-
-        float elapsed = 0f;
-
-        while (elapsed < snapDuration) {
-            elapsed += Time.deltaTime;
-            //float t = t = 1 - Mathf.Pow(1 - elapsed / snapDuration, 2); // sera a fracao dessa interpolacao
-            float t = Mathf.Clamp01(elapsed / snapDuration);
-            float curveT = snapCurve.Evaluate(t);
-            dice.gameObject.transform.rotation = Quaternion.Slerp(startRot, endRot, curveT);
-            yield return null; //ele para aqui a cada frame, assim o dado segue girando no sentido que queremos ao decorrer do passar dos frmaes
-        }
-
-        dice.gameObject.transform.rotation = endRot;
-
-
-    }
-
-    private Quaternion GetRotationForFace(int face, int tiltAmount) {
-
-
-        switch (face) {
-            case 1: return Quaternion.Euler(-90, tiltAmount, 0);
-            case 2: return Quaternion.Euler(0, tiltAmount, 0);
-            case 3: return Quaternion.Euler(0, tiltAmount, 90);
-            case 4: return Quaternion.Euler(0, tiltAmount, -90);
-            case 5: return Quaternion.Euler(180, tiltAmount, 0);
-            case 6: return Quaternion.Euler(90, tiltAmount, 0);
-            default: return Quaternion.identity;
-        }
-
-    }
-    #endregion
 
 
 

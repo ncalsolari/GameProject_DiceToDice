@@ -27,16 +27,6 @@ public class GameManager : MonoBehaviour {
     private GameState gameState;
 
 
-
-
-
-
-
-
-
-
-    [SerializeField] private GameInput gameInput;
-
     private void Awake() {
         Instance = this;
 
@@ -45,6 +35,8 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         GameInput.Instance.OnShowDiceAction += GameInput_OnShowDiceAction;
+        GameInput.Instance.OnRollDiceAction += GameInput_OnRollDiceAction;
+        DealerRollDice.Instance.OnAllDiceStoped += DealerRollDice_OnAllDiceStoped;
         ChangeGameState(gameState);
     }
 
@@ -69,7 +61,7 @@ public class GameManager : MonoBehaviour {
                 break;
             case GameState.StartRound:
                 SetupRound();
-                ChangeGameState(GameState.RollDice);
+
                 break;
             case GameState.RollDice:
                 // aqui soh ativa UI da mao
@@ -162,6 +154,17 @@ public class GameManager : MonoBehaviour {
 
 
 
+    }
+
+    private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
+        Debug.Log("Estado de jogo: Rolando dados...");
+        ChangeGameState(GameState.RollDice);
+
+    }
+
+    private void DealerRollDice_OnAllDiceStoped(object sender, EventArgs e) {
+        Debug.Log("Estado de jogo: Dados parados...");
+        ChangeGameState(GameState.PlayerTurn); // ou cpu turn
     }
 
 }

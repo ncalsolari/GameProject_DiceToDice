@@ -30,6 +30,7 @@ public class InShowDicesUI : MonoBehaviour {
     private void Start() {
 
         GameInput.Instance.OnRollDiceActionTransitionScene += GameInput_OnRollDiceActionTransitionScene;
+        DealerRollDice.Instance.OnAllDiceStoped += DealerRollDice_OnAllDiceStoped;
         Hide();
     }
 
@@ -47,6 +48,15 @@ public class InShowDicesUI : MonoBehaviour {
         Show();
 
 
+    }
+
+    private void DealerRollDice_OnAllDiceStoped(object sender, EventArgs e) {
+        StartCoroutine(WaitingToReturnToTable());
+    }
+
+    private System.Collections.IEnumerator WaitingToReturnToTable() {
+        yield return new WaitForSeconds(2);
+        Hide();
     }
     private void SetRollButton(bool value) {
 

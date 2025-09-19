@@ -68,10 +68,12 @@ public class DealerRemoveDice : MonoBehaviour {
     }
 
     private void GameInput_OnRemoveSelectedDiceAction(object sender, EventArgs e) {
-
-        Destroy(diceList[selectedDice - 1].gameObject);
-        diceList.RemoveAt(selectedDice - 1);
-        Player.Instance.RemoveSelectedDice(selectedDice - 1);
+        if (selectedDice > 0) {
+            Destroy(diceList[selectedDice - 1].gameObject);
+            diceList.RemoveAt(selectedDice - 1);
+            Player.Instance.RemoveSelectedDice(selectedDice - 1);
+            selectedDice = 0;
+        }
 
     }
 
@@ -126,8 +128,9 @@ public class DealerRemoveDice : MonoBehaviour {
             Dice diceScript = dice.GetComponent<Dice>();
             Rigidbody rb = dice.GetComponent<Rigidbody>();
             rb.isKinematic = true;//tira fisica
-            if (i == 0) {
+            if (i == 0) {//abro a tela de remocao com o primeiro dado já selecionado
                 dice.GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(false);
+                selectedDice = 1;
             }
             else {
                 dice.GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(true);
