@@ -8,6 +8,8 @@ public class DealerRemoveDice : MonoBehaviour {
     const int DICE_QNT = 5;
     public static DealerRemoveDice Instance { get; private set; }
 
+    public event EventHandler OnDiceRemoved;
+
     [SerializeField] private List<Transform> dicePositionList = new List<Transform>();
     private int selectedDice;
 
@@ -27,6 +29,7 @@ public class DealerRemoveDice : MonoBehaviour {
 
     private List<GameObject> diceList = new List<GameObject>();
     private List<Vector2> offsetList = new List<Vector2>();
+
 
     private List<float> baseRotSpeed = new();
     private List<float> currentRotSpeed = new();
@@ -49,9 +52,13 @@ public class DealerRemoveDice : MonoBehaviour {
 
     private void GameInput_OnSelectedDiceToRemove(object sender, GameInput.OnSelectedDiceToRemoveEventArgs e) {
 
+        if (selectedDice == -1) {
+            return;
+        }
+
         if (e.indexSelectedDice <= diceList.Count) { //se eu apertar no botao aonde nao tem mais dado ele nao faz nada
             for (int i = 0; i < diceList.Count; i++) {//varre meus dados
-                if (e.indexSelectedDice == i + 1) {//se for o dado do indice do botao selecionad
+                if (e.indexSelectedDice == i + 1) {//se for o dado do indice do botao selecionado
                     diceList[i].GetComponentInChildren<SelectedDiceVisual>().SetVisualGameObject(false);//seleciona o componente com o script do visual selecionado
                     BoostDiceRotation(i, 50f, 2f);//boost de rotacao
 
@@ -69,10 +76,14 @@ public class DealerRemoveDice : MonoBehaviour {
 
     private void GameInput_OnRemoveSelectedDiceAction(object sender, EventArgs e) {
         if (selectedDice > 0) {
-            Destroy(diceList[selectedDice - 1].gameObject);
-            diceList.RemoveAt(selectedDice - 1);
+            Rigidbody rb = diceList[selectedDice - 1].GetComponent<Rigidbody>();
+            rb.isKinematic = false;//poe a fisica
+
+            // diceList[selectedDice - 1].gameObject.SetActive(false);
+
             Player.Instance.RemoveSelectedDice(selectedDice - 1);
-            selectedDice = 0;
+            selectedDice = -1;
+            OnDiceRemoved.Invoke(this, EventArgs.Empty);
         }
 
     }
@@ -117,7 +128,10 @@ public class DealerRemoveDice : MonoBehaviour {
 
 
 
+    //Player chama essa func ao abrir a tela de remove dice
     public void ShowRemoveDiceList(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
+
+        selectedDice = 0;
 
         for (int i = 0; i < diceQnt; i++) {
 
@@ -181,5 +195,7 @@ public class DealerRemoveDice : MonoBehaviour {
 
 
         diceList.Clear(); // limpa a lista
+        baseRotSpeed.Clear();
+        baseFloatPos.Clear();
     }
 }

@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour {
         GameInput.Instance.OnShowDiceAction += GameInput_OnShowDiceAction;
         GameInput.Instance.OnRollDiceAction += GameInput_OnRollDiceAction;
         DealerRollDice.Instance.OnAllDiceStoped += DealerRollDice_OnAllDiceStoped;
+        DealerRemoveDice.Instance.OnDiceRemoved += DealerRemoveDice_OnDiceRemoved;
         ChangeGameState(gameState);
     }
 
@@ -165,6 +166,11 @@ public class GameManager : MonoBehaviour {
     private void DealerRollDice_OnAllDiceStoped(object sender, EventArgs e) {
         Debug.Log("Estado de jogo: Dados parados...");
         ChangeGameState(GameState.PlayerTurn); // ou cpu turn
+    }
+
+    private void DealerRemoveDice_OnDiceRemoved(object sender, EventArgs e) {
+        Debug.Log("Estado de jogo: Dado removido, nova rodada ");
+        ChangeGameState(GameState.StartRound); // ou cpu turn
     }
 
 }

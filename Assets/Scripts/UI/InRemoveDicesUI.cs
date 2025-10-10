@@ -67,6 +67,7 @@ public class InRemoveDicesUI : MonoBehaviour {
     private void Start() {
 
         GameInput.Instance.OnRemoveDiceActionTransitionScene += GameInput_OnRemoveDiceActionTransitionScene;
+        DealerRemoveDice.Instance.OnDiceRemoved += DealerRemoveDice_OnDiceRemoved;
 
         Hide();
     }
@@ -75,6 +76,17 @@ public class InRemoveDicesUI : MonoBehaviour {
     private void GameInput_OnRemoveDiceActionTransitionScene(object sender, EventArgs e) {
         Show();
         GameInput.Instance.RemoveDiceInput();
+    }
+
+    private void DealerRemoveDice_OnDiceRemoved(object sender, EventArgs e) {
+        StartCoroutine(WaitingToReturnToTable());
+    }
+
+    private System.Collections.IEnumerator WaitingToReturnToTable() {
+        yield return new WaitForSeconds(2);
+
+        Hide();
+        DealerRemoveDice.Instance.EraseDices();
     }
 
 
