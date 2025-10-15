@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager Instance { get; private set; }
 
+    public event EventHandler OnStartRound;
+
     private int roundNumber = 0;
     private bool isPlayerTurn = false;
     private enum GameState {
@@ -171,6 +173,7 @@ public class GameManager : MonoBehaviour {
     private void DealerRemoveDice_OnDiceRemoved(object sender, EventArgs e) {
         Debug.Log("Estado de jogo: Dado removido, nova rodada ");
         ChangeGameState(GameState.StartRound); // ou cpu turn
+        OnStartRound?.Invoke(this, EventArgs.Empty);
     }
 
 }

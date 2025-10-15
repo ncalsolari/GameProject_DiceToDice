@@ -20,7 +20,7 @@ public class DealerRollDice : MonoBehaviour {
 
     private bool allDiceStoped = true;
     private bool diceBoxDiseabled = false;
-    private bool getFaceUpTime = false;
+
 
     #region VariaveisDeLancamento
     [SerializeField] Transform bucketCenter;
@@ -52,7 +52,7 @@ public class DealerRollDice : MonoBehaviour {
     private void Start() {
 
         GameInput.Instance.OnRollDiceAction += GameInput_OnRollDiceAction;
-        GameInput.Instance.OnEraseDiceAction += GameInput_OnEraseDiceAction;
+        GameManager.Instance.OnStartRound += GameManager_OnStartRound;
 
     }
 
@@ -67,7 +67,16 @@ public class DealerRollDice : MonoBehaviour {
     private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
 
     }
-    private void GameInput_OnEraseDiceAction(object sender, EventArgs e) {
+
+    private void GameManager_OnStartRound(object sender, EventArgs e) { //reseto as variaveis para inicio de rodada
+        Player.Instance.SetDiceHandActive(false); //desativo mao do player
+        EraseDices();
+        ShowDiceBoxWalls(); // reativa as paredes da DiceBox 
+
+
+    }
+
+    public void EraseDices() {
         // percorre todos os dados instanciados e destrói
         foreach (var diceEntry in diceList) {
             if (diceEntry.gameObject != null) {
@@ -75,11 +84,9 @@ public class DealerRollDice : MonoBehaviour {
             }
         }
 
-
         diceList.Clear(); // limpa a lista
-        Player.Instance.SetDiceHandActive(false); //desativo mao do player
-        ShowDiceBoxWalls(); // reativa as paredes da DiceBox 
     }
+
 
     public void RollDiceHand(List<DiceSO> playerDiceList, int diceQnt, int[] playerDiceValue) {
 
@@ -146,7 +153,6 @@ public class DealerRollDice : MonoBehaviour {
                 if (CheckAllDiceStop()) {
                     Debug.Log("Segunda parada dos dados");
                     allDiceStoped = true;
-                    getFaceUpTime = true;
 
                     GetDiceFaces(); //define as faces voltadas para cima
                     Player.Instance.SetDiceValues(this.diceList);// atualiza mao do player
@@ -163,21 +169,18 @@ public class DealerRollDice : MonoBehaviour {
     //RETORNA AS FACES DE TODOS OS DADOS DA MAO
     //incompleto
     private void GetDiceFaces() {
-        if (getFaceUpTime) { //talvez usar uma coroutine ao inves dessa variavel boolean 
-            for (int i = 0; i < diceList.Count; i++) {
 
-                int faceNumber = GetFaceUp(diceList[i]);
-                Debug.Log("Face: " + faceNumber);
+        for (int i = 0; i < diceList.Count; i++) {
 
-                Dice diceScript = diceList[i].GetComponent<Dice>();
-                diceScript.SetDiceFace(faceNumber);
+            int faceNumber = GetFaceUp(diceList[i]);
+            Debug.Log("Face: " + faceNumber);
 
+            Dice diceScript = diceList[i].GetComponent<Dice>();
+            diceScript.SetDiceFace(faceNumber);
 
-            }
-
-            getFaceUpTime = false;
 
         }
+
     }
 
     public int GetFaceUp(GameObject localDice) {
@@ -245,7 +248,7 @@ public class DealerRollDice : MonoBehaviour {
     //n acho q eh algo digno de refatoracao nao, eu penso q esse bug n traz nada d prejudicial 
     private bool CheckAllDiceStop() { //checa quando todos os dados estao parados, usado para desativar as paredes da caixa
 
-        bool allDiceStoped = false;
+        bool allStoped = false;
         //para cada dado checo se algum deles esta parando
         for (int i = 0; i < diceList.Count; i++) {
             Dice diceScript = diceList[i].GetComponent<Dice>();
@@ -259,17 +262,17 @@ public class DealerRollDice : MonoBehaviour {
 
                 }
                 else { //se pelo menos 1 dado nao esta parando eu ja retorno false
-                    allDiceStoped = false;
-                    return allDiceStoped;
+                    allStoped = false;
+                    return allStoped;
                 }
             }
             else {
-                allDiceStoped = true;
+                allStoped = true;
             }
 
         }
 
-        return allDiceStoped;
+        return allStoped;
 
     }
 
