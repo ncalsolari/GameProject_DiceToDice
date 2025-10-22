@@ -67,7 +67,7 @@ public class InRemoveDicesUI : MonoBehaviour {
     private void Start() {
 
         GameInput.Instance.OnRemoveDiceActionTransitionScene += GameInput_OnRemoveDiceActionTransitionScene;
-        DealerRemoveDice.Instance.OnDiceRemoved += DealerRemoveDice_OnDiceRemoved;
+        DealerRemoveDice.Instance.OnDiceRemovedUI += DealerRemoveDice_OnDiceRemovedUI;
 
         Hide();
     }
@@ -78,7 +78,7 @@ public class InRemoveDicesUI : MonoBehaviour {
         GameInput.Instance.RemoveDiceInput();
     }
 
-    private void DealerRemoveDice_OnDiceRemoved(object sender, EventArgs e) {
+    private void DealerRemoveDice_OnDiceRemovedUI(object sender, EventArgs e) {
         StartCoroutine(WaitingToReturnToTable());
     }
 

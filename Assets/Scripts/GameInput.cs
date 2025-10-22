@@ -70,4 +70,7 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
         });
 
     }
+
+
+
 }

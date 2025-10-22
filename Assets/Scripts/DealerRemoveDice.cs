@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 
 public class DealerRemoveDice : MonoBehaviour {
@@ -8,6 +9,7 @@ public class DealerRemoveDice : MonoBehaviour {
     const int DICE_QNT = 5;
     public static DealerRemoveDice Instance { get; private set; }
 
+    public event EventHandler OnDiceRemovedUI;
     public event EventHandler OnDiceRemoved;
 
     [SerializeField] private List<Transform> dicePositionList = new List<Transform>();
@@ -50,6 +52,9 @@ public class DealerRemoveDice : MonoBehaviour {
         FloatingDices(diceList);
     }
 
+
+
+    //gira os dados ao seleciona-los e poe efeito visual de selecionado
     private void GameInput_OnSelectedDiceToRemove(object sender, GameInput.OnSelectedDiceToRemoveEventArgs e) {
 
         if (selectedDice == -1) {
@@ -83,7 +88,7 @@ public class DealerRemoveDice : MonoBehaviour {
 
             Player.Instance.RemoveSelectedDice(selectedDice - 1);
             selectedDice = -1;
-            OnDiceRemoved.Invoke(this, EventArgs.Empty);
+            OnDiceRemovedUI.Invoke(this, EventArgs.Empty);
         }
 
     }
@@ -197,5 +202,7 @@ public class DealerRemoveDice : MonoBehaviour {
         diceList.Clear(); // limpa a lista
         baseRotSpeed.Clear();
         baseFloatPos.Clear();
+        OnDiceRemoved.Invoke(this, EventArgs.Empty);
+
     }
 }

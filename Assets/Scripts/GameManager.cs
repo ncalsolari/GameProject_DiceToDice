@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour {
 
                 break;
             case GameState.RollDice:
+                RollDice();
                 // aqui soh ativa UI da mao
                 //o resto daqui pra baixo eh tudo fora deste switch case
                 //espero rolar os dados
@@ -116,12 +117,28 @@ public class GameManager : MonoBehaviour {
     }
 
     private void SetupRound() {
-        Debug.Log("Rodada " + roundNumber + " começou!");
 
-        //tratativas de inicio de rodada
-        //mao dos cpus
-        //de quem eh a vez
-        //reseto dados da mesa
+        if (roundNumber > 1) {
+            Debug.Log("Rodada " + roundNumber + " começou!");
+
+            //tratativas de inicio de rodada
+            //mao dos cpus
+            //de quem eh a vez
+            //reseto dados da mesa
+
+            ChangeGameState(GameState.RollDice);
+        }
+        else {
+            Debug.Log("Rodada " + roundNumber + " começou!");
+            ChangeGameState(GameState.RollDice);
+
+        }
+
+
+    }
+
+    private void RollDice() {
+        StartCoroutine(WaitingToRollDice());
 
     }
 
@@ -161,7 +178,7 @@ public class GameManager : MonoBehaviour {
 
     private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
         Debug.Log("Estado de jogo: Rolando dados...");
-        ChangeGameState(GameState.RollDice);
+        //ChangeGameState(GameState.RollDice);
 
     }
 
@@ -172,8 +189,19 @@ public class GameManager : MonoBehaviour {
 
     private void DealerRemoveDice_OnDiceRemoved(object sender, EventArgs e) {
         Debug.Log("Estado de jogo: Dado removido, nova rodada ");
+        roundNumber++;
+
         ChangeGameState(GameState.StartRound); // ou cpu turn
         OnStartRound?.Invoke(this, EventArgs.Empty);
     }
+
+
+
+    private System.Collections.IEnumerator WaitingToRollDice() {
+        yield return new WaitForSeconds(2);
+        Debug.Log("AAAAAAAAAAAAAAAAAAAAAA");
+        GameInput.Instance.RollDiceInputTransitionScene();
+    }
+
 
 }
