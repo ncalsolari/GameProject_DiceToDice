@@ -13,6 +13,8 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public event EventHandler OnRemoveDiceAction;
     public event EventHandler OnRemoveSelectedDiceAction;
 
+    //  public event EventHandler OnRemoveSelectedDiceAction;
+
     public event EventHandler<OnSelectedDiceToRemoveEventArgs> OnSelectedDiceToRemove;
     public class OnSelectedDiceToRemoveEventArgs : EventArgs {
         public int indexSelectedDice;
@@ -71,6 +73,27 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
 
     }
 
+    #region BetPanel
+    public void BetMinusButton() {
 
+    }
+
+    public void BetPlusButton() {
+
+    }
+
+    public void SelectFaceBet(int index) {
+
+    }
+
+
+    public void BetLiarButton() {
+
+    }
+
+    public void BetButton() {
+
+    }
+    #endregion
 
 }
