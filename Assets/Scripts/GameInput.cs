@@ -13,9 +13,18 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     public event EventHandler OnRemoveDiceAction;
     public event EventHandler OnRemoveSelectedDiceAction;
 
+
+    public event EventHandler<SingleIntEventArgs> OnChangeQntDiceBet;
+    public event EventHandler<SingleIntEventArgs> OnSelectDiceFaceBet;
+    public event EventHandler<SingleIntEventArgs> OnConfirmBet;
+
     //  public event EventHandler OnRemoveSelectedDiceAction;
 
     public event EventHandler<OnSelectedDiceToRemoveEventArgs> OnSelectedDiceToRemove;
+
+    public class SingleIntEventArgs : EventArgs {
+        public int value;
+    }
     public class OnSelectedDiceToRemoveEventArgs : EventArgs {
         public int indexSelectedDice;
     }
@@ -74,26 +83,28 @@ public class GameInput : MonoBehaviour {//Essa classe dispara os eventos dos bot
     }
 
     #region BetPanel
-    public void BetMinusButton() {
+    public void BetButton(int index) {
+        Debug.Log("Selecionando qntd dados da aposta");
+        OnChangeQntDiceBet?.Invoke(this, new SingleIntEventArgs {
+            value = index
+        });
 
     }
-
-    public void BetPlusButton() {
-
-    }
-
     public void SelectFaceBet(int index) {
+        Debug.Log("Selecionando a face de dados da aposta");
+        OnSelectDiceFaceBet?.Invoke(this, new SingleIntEventArgs {
+            value = index
+        });
+
+    }
+    public void ConfirmBetButton(int index) {
+        Debug.Log("Confirmando a aposta");
+        OnConfirmBet?.Invoke(this, new SingleIntEventArgs {
+            value = index
+        });
 
     }
 
-
-    public void BetLiarButton() {
-
-    }
-
-    public void BetButton() {
-
-    }
     #endregion
 
 }

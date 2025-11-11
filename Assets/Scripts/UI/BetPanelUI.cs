@@ -22,13 +22,13 @@ public class BetPanelUI : MonoBehaviour {
 
         minusQntButton.onClick.AddListener(() => {
             Debug.Log("menos 1 na aposta!");
-            GameInput.Instance.BetMinusButton();
+            GameInput.Instance.BetButton(-1);
 
         });
 
         plusQntButton.onClick.AddListener(() => {
             Debug.Log("mais 1 na aposta");
-            GameInput.Instance.BetPlusButton();
+            GameInput.Instance.BetButton(1);
 
         });
 
@@ -70,18 +70,19 @@ public class BetPanelUI : MonoBehaviour {
 
         betButton.onClick.AddListener(() => {
             Debug.Log("Confirmando aposta!");
-            GameInput.Instance.BetButton();
+            GameInput.Instance.ConfirmBetButton(0);
 
         });
 
         liarButton.onClick.AddListener(() => {
             Debug.Log("MENTIRA!");
-            GameInput.Instance.BetLiarButton();
+            GameInput.Instance.ConfirmBetButton(1);
 
         });
 
     }
     private void Start() {
+        GameManager.Instance.OnPlayerTurn += GameManager_OnPlayerTurn;
 
         Hide();
     }
@@ -89,6 +90,11 @@ public class BetPanelUI : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 
+    }
+
+
+    private void GameManager_OnPlayerTurn(object sender, EventArgs e) {
+        Show();
     }
 
 

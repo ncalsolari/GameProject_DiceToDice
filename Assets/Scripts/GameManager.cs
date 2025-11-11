@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
 
     public event EventHandler OnStartRound;
+    public event EventHandler OnPlayerTurn;
 
     private int roundNumber = 0;
     private bool isPlayerTurn = false;
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour {
     private void Update() {
         switch (gameState) {
             case GameState.PlayerTurn:
+                OnPlayerTurn?.Invoke(this, EventArgs.Empty);
                 //espera input do player
                 //EndTurn();
                 break;
@@ -184,6 +186,12 @@ public class GameManager : MonoBehaviour {
 
     private void DealerRollDice_OnAllDiceStoped(object sender, EventArgs e) {
         Debug.Log("Estado de jogo: Dados parados...");
+        StartCoroutine(WaitingToReturnToTable());
+
+    }
+
+    private System.Collections.IEnumerator WaitingToReturnToTable() {
+        yield return new WaitForSeconds(3);
         ChangeGameState(GameState.PlayerTurn); // ou cpu turn
     }
 
@@ -198,7 +206,7 @@ public class GameManager : MonoBehaviour {
 
 
     private System.Collections.IEnumerator WaitingToRollDice() {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         Debug.Log("AAAAAAAAAAAAAAAAAAAAAA");
         GameInput.Instance.RollDiceInputTransitionScene();
     }

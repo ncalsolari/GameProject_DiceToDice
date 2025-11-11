@@ -46,8 +46,6 @@ public class InShowDicesUI : MonoBehaviour {
 
     private void GameInput_OnRollDiceActionTransitionScene(object sender, EventArgs e) {
         Show();
-
-
     }
 
     private void DealerRollDice_OnAllDiceStoped(object sender, EventArgs e) {
