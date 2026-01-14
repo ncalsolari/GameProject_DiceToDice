@@ -98,12 +98,15 @@ public class DealerRemoveDice : MonoBehaviour {
 
         if (!diceIsBoostin[diceIndex]) {
             diceIsBoostin[diceIndex] = true;
+
             StartCoroutine(BoostRoutine(diceIndex, multiplier, duration));
         }
 
     }
 
     private System.Collections.IEnumerator BoostRoutine(int diceIndex, float multiplier, float duration) {
+
+
         float original = baseRotSpeed[diceIndex];//guardo rot inicial
         float boosted = original * multiplier;//calculo o boost
         float elapsed = 0f;
@@ -119,6 +122,7 @@ public class DealerRemoveDice : MonoBehaviour {
             yield return null; // espera 1 frame e continua
 
         }
+
 
         //transicao estava dura
         // baseRotSpeed[diceIndex] = original * multiplier;
@@ -197,7 +201,6 @@ public class DealerRemoveDice : MonoBehaviour {
                 Destroy(diceEntry.gameObject);
             }
         }
-
 
         diceList.Clear(); // limpa a lista
         baseRotSpeed.Clear();

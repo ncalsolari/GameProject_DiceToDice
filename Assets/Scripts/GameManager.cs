@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour {
     private void Start() {
         GameInput.Instance.OnShowDiceAction += GameInput_OnShowDiceAction;
         GameInput.Instance.OnRollDiceAction += GameInput_OnRollDiceAction;
+        GameInput.Instance.OnConfirmBet += GameInput_OnConfirmBet;
+
         DealerRollDice.Instance.OnAllDiceStoped += DealerRollDice_OnAllDiceStoped;
         DealerRemoveDice.Instance.OnDiceRemoved += DealerRemoveDice_OnDiceRemoved;
         ChangeGameState(gameState);
@@ -177,6 +179,14 @@ public class GameManager : MonoBehaviour {
 
 
     }
+
+    private void GameInput_OnConfirmBet(object sender, EventArgs e) {
+        ChangeGameState(GameState.CpuTurn);// tem q checar se eh bet ou liar aqui, se for liar eh endturn
+
+
+    }
+
+
 
     private void GameInput_OnRollDiceAction(object sender, EventArgs e) {
         Debug.Log("Estado de jogo: Rolando dados...");

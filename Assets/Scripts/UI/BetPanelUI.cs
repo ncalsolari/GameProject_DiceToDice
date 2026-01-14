@@ -83,6 +83,7 @@ public class BetPanelUI : MonoBehaviour {
     }
     private void Start() {
         GameManager.Instance.OnPlayerTurn += GameManager_OnPlayerTurn;
+        GameInput.Instance.OnConfirmBet += GameInput_OnConfirmBet;
 
         Hide();
     }
@@ -95,6 +96,10 @@ public class BetPanelUI : MonoBehaviour {
 
     private void GameManager_OnPlayerTurn(object sender, EventArgs e) {
         Show();
+    }
+
+    private void GameInput_OnConfirmBet(object sender, EventArgs e) {
+        Hide();
     }
 
 
