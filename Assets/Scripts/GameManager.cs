@@ -84,9 +84,10 @@ public class GameManager : MonoBehaviour {
                 break;
 
             case GameState.EndTurn:
-                //checo se a ultima jogada foi mentira ou aposta
-                // se mentira chamo o state LiarCall 
-                //se aposta chamo player turn ou cpu turn, depende d quem eh a vez
+                EndTurn();
+                //proximo jogador
+                // jogadores cpu salvos em um vetor[n]
+                //se ultimo cpu jogou entao eh vez do player, se nao eh vez do cpu vetor[i+1]
                 break;
             case GameState.Liar:
 
@@ -148,7 +149,7 @@ public class GameManager : MonoBehaviour {
 
     private IEnumerator CpuTurnRoutine() {
 
-        Debug.Log("CPU pensando...");
+        Debug.Log("CPU pensandoOOO...");
         yield return new WaitForSeconds(2f);
 
         //IA
@@ -160,17 +161,23 @@ public class GameManager : MonoBehaviour {
     private void EndTurn() {
         if (isPlayerTurn) {
             isPlayerTurn = false;
-            ChangeGameState(GameState.EndTurn);
+            ChangeGameState(GameState.CpuTurn);
+            Debug.Log("endturn player turn");
         }
         else {
             isPlayerTurn = true;
-            ChangeGameState(GameState.EndTurn);
+            ChangeGameState(GameState.PlayerTurn);
+            Debug.Log("endturn cpu turn");
         }
     }
 
 
     private bool CheckGameOver() {
         return false;
+    }
+
+    private void LiarCall() {
+
     }
 
 
@@ -180,9 +187,15 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    private void GameInput_OnConfirmBet(object sender, EventArgs e) {
-        ChangeGameState(GameState.CpuTurn);// tem q checar se eh bet ou liar aqui, se for liar eh endturn
+    private void GameInput_OnConfirmBet(object sender, GameInput.SingleIntEventArgs e) {
+        if (e.value == 0) {
+            ChangeGameState(GameState.EndTurn);// aposta feita, vez do proximo jogador
 
+        }
+        else {
+            ChangeGameState(GameState.Liar);// chamado de mentira acionado, etapa de verificacao e fim de uma rodada, alguem vai perder um dado
+
+        }
 
     }
 
@@ -202,6 +215,7 @@ public class GameManager : MonoBehaviour {
 
     private System.Collections.IEnumerator WaitingToReturnToTable() {
         yield return new WaitForSeconds(3);
+        isPlayerTurn = true;
         ChangeGameState(GameState.PlayerTurn); // ou cpu turn
     }
 

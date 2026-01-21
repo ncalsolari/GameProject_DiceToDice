@@ -4,8 +4,10 @@ public class DealerBet : MonoBehaviour {
 
 
     private int diceQntBet = 0;
-    private int diceQntAllHands = 10;
+    private int diceQntAllHands = 10; // ESTA HARDCODE - MUDAR, total de dados no jogo todo, somando todos os players
     private int diceFaceSelected = 0;
+
+    private int betStatus = -1;//false=liar / true=bet
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         GameInput.Instance.OnChangeQntDiceBet += GameInput_OnChangeQntDiceBet;
@@ -44,8 +46,13 @@ public class DealerBet : MonoBehaviour {
 
     private void GameInput_OnConfirmBet(object sender, GameInput.SingleIntEventArgs e) {
 
-        int confirmResult = e.value;
+        betStatus = e.value;
 
-        Debug.Log(confirmResult);
+        Debug.Log(betStatus);
+    }
+
+    private void CpuTurn(int diceQnt, int diceFace) {
+        //CPU pensa na jogada e retorna liar ou nova aposta
+        //preciso da mao do cpu
     }
 }
